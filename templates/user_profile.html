@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+	<link rel='stylesheet' href="../static/css/for_profile.css">
+</head>
+
+<div class="profile">
+    {% if is_file %}
+        <img src="../static/img/avatar/1.png">
+    {% else %}
+        <img src="../static/img/avatar/defaultava.jpg">
+    {% endif %}
+    <p>Имя: {{ user.name }}</p>
+    <p>Фамилия: {{ user.surname }}</p>
+    <p>Логин: {{ user.login }}</p>
+    <p>О себе: {{ user.about_me }}</p>
+    <p>Роль: {{ user.role }}</p>
+    <div class="btns">
+        {% if current_user.is_authenticated and user.id == current_user.id %}
+            <a href="/liked_posts"><button type="button" class="btn btn-outline-danger">Понравившиеся</button></a>
+        {% endif %}
+        {% if current_user.is_authenticated and (user.id == current_user.id or current_user.role == "admin" or current_user.role == "main admin") %}
+            <a href="/edit_profile/{{ user.login }}"><button type="button" class="btn btn-outline-danger">Изменить профиль</button></a>
+        {% endif %}
+        <a href="/posts/{{ user.login }}"><button type="button" class="btn btn-outline-danger">Посты {{ user.login }}</button></a>
+        {% if current_user.is_authenticated and (current_user.role == "admin" or current_user.role == "main admin") %}
+            {% if user.role != "main admin" %}
+                <a href="/give_admin/{{ user.login }}"><button type="button" class="btn btn-outline-danger">
+                    {% if user.role == "user" %}
+                        Дать роль модератора
+                    {% elif user.role == "admin" %}
+                        Вернуть роль пользователя
+                    {% endif %}
+                </button></a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
